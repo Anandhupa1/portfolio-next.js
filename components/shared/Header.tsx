@@ -2,218 +2,147 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { CircleCheckIcon, CircleHelpIcon, CircleIcon } from "lucide-react"
+import { Menu, X, AlignJustify, Grid3x3, MenuSquare } from "lucide-react"
 
-import { useIsMobile } from "@/hooks/use-mobile"
+import { Button } from "@/components/ui/button"
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu"
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: "Alert Dialog",
-    href: "/docs/primitives/alert-dialog",
-    description:
-      "A modal dialog that interrupts the user with important content and expects a response.",
-  },
-  {
-    title: "Hover Card",
-    href: "/docs/primitives/hover-card",
-    description:
-      "For sighted users to preview content available behind a link.",
-  },
-  {
-    title: "Progress",
-    href: "/docs/primitives/progress",
-    description:
-      "Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
-  },
-  {
-    title: "Scroll-area",
-    href: "/docs/primitives/scroll-area",
-    description: "Visually or semantically separates content.",
-  },
-  {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-  },
-  {
-    title: "Tooltip",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  },
+const navItems = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Work", href: "/work" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
 ]
 
 export default function Header() {
-  const isMobile = useIsMobile()
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false)
+  }
 
   return (
-    <header className="border-b">
-      <div className="container mx-auto px-4">
-        <NavigationMenu viewport={isMobile}>
-      <NavigationMenuList className="flex-wrap">
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Home</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <li className="row-span-3">
-                <NavigationMenuLink asChild>
-                  <a
-                    className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-linear-to-b p-4 no-underline outline-hidden transition-all duration-200 select-none focus:shadow-md md:p-6"
-                    href="/"
-                  >
-                    <div className="mb-2 text-lg font-medium sm:mt-4">
-                      shadcn/ui
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+          {/* Logo/Brand */}
+          <Link 
+            href="/" 
+            className="flex items-center space-x-2 group transition-all duration-200 hover:opacity-80"
+          >
+            <span className="text-xl font-bold text-primary">Portfolio</span>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="px-4 py-2 text-sm font-medium text-foreground/70 hover:text-primary rounded-md transition-all duration-200"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Mobile Menu Button */}
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                aria-label="Toggle menu"
+                className="relative h-10 w-10 rounded-full bg-primary/5 border border-primary/20 hover:bg-primary/15 hover:border-primary/30 hover:scale-110 active:scale-95 transition-all duration-300 group overflow-hidden"
+              >
+                {/* Animated background on hover */}
+                <div className="absolute inset-0 bg-primary/10 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300" />
+                
+                {/* Modern Menu Icon - Clean and Compact */}
+                <Menu 
+                  className={`relative z-10 h-5 w-5 text-foreground/70 group-hover:text-primary transition-all duration-300 ${
+                    mobileMenuOpen ? 'rotate-90 scale-110 opacity-0' : 'opacity-100'
+                  }`}
+                />
+                <X 
+                  className={`absolute z-10 h-5 w-5 text-primary transition-all duration-300 ${
+                    mobileMenuOpen ? 'rotate-0 scale-100 opacity-100' : 'rotate-90 scale-0 opacity-0'
+                  }`}
+                />
+              </Button>
+            </SheetTrigger>
+            <SheetContent 
+              side="right" 
+              className="w-[320px] sm:w-[400px] p-0 overflow-hidden [&>button]:hidden"
+            >
+              {/* Color Splash Background - Entire Sidebar - More Visible */}
+              <div className="absolute inset-0 bg-primary/12 animate-color-splash" />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/18 via-primary/10 to-primary/4 animate-splash-expand" />
+              
+              <div className="relative h-full flex flex-col bg-background/98 backdrop-blur-xl">
+                {/* Modern Header with Logo/Avatar Placeholder */}
+                <div className="relative px-6 pt-8 pb-6">
+                  <div className="flex items-center justify-end mb-6">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={closeMobileMenu}
+                      className="relative h-10 w-10 rounded-full bg-primary/5 border border-primary/20 hover:bg-primary/15 hover:border-primary/30 hover:scale-110 active:scale-95 text-primary/70 hover:text-primary transition-all duration-300 animate-slide-in-left group overflow-hidden"
+                    >
+                      {/* Animated background on hover */}
+                      <div className="absolute inset-0 bg-primary/10 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300" />
+                      {/* Icon */}
+                      <X className="relative z-10 h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
+                    </Button>
+                  </div>
+                  
+                  {/* Modern Logo/Avatar Section */}
+                  <div className="flex flex-col items-center animate-slide-in-right">
+                    {/* Avatar/Logo Placeholder - Circular with gradient */}
+                    <div className="relative mb-4">
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 via-primary/20 to-primary/10 border-2 border-primary/20 flex items-center justify-center overflow-hidden animate-scale-in">
+                        {/* You can replace this with an actual image */}
+                        <span className="text-2xl font-bold text-primary">P</span>
+                      </div>
+                      {/* Animated ring effect */}
+                      <div className="absolute inset-0 rounded-full border-2 border-primary/30 animate-ping-slow" />
                     </div>
-                    <p className="text-muted-foreground text-sm leading-tight">
-                      Beautifully designed components built with Tailwind CSS.
-                    </p>
-                  </a>
-                </NavigationMenuLink>
-              </li>
-              <ListItem href="/docs" title="Introduction">
-                Re-usable components built using Radix UI and Tailwind CSS.
-              </ListItem>
-              <ListItem href="/docs/installation" title="Installation">
-                How to install dependencies and structure your app.
-              </ListItem>
-              <ListItem href="/docs/primitives/typography" title="Typography">
-                Styles for headings, paragraphs, lists...etc
-              </ListItem>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Components</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid gap-2 sm:w-[400px] md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-              {components.map((component) => (
-                <ListItem
-                  key={component.title}
-                  title={component.title}
-                  href={component.href}
-                >
-                  {component.description}
-                </ListItem>
-              ))}
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href="/docs">Docs</Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-        <NavigationMenuItem className="hidden md:block">
-          <NavigationMenuTrigger>List</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[300px] gap-4">
-              <li>
-                <NavigationMenuLink asChild>
-                  <Link href="#">
-                    <div className="font-medium">Components</div>
-                    <div className="text-muted-foreground">
-                      Browse all components in the library.
+                    
+                    {/* Optional: Name or tagline */}
+                    <div className="text-center animate-fade-in-up" style={{ animationDelay: '200ms' }}>
+                      <p className="text-sm font-medium text-primary/80">Portfolio</p>
                     </div>
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#">
-                    <div className="font-medium">Documentation</div>
-                    <div className="text-muted-foreground">
-                      Learn how to use the library.
-                    </div>
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#">
-                    <div className="font-medium">Blog</div>
-                    <div className="text-muted-foreground">
-                      Read our latest blog posts.
-                    </div>
-                  </Link>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem className="hidden md:block">
-          <NavigationMenuTrigger>Simple</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[200px] gap-4">
-              <li>
-                <NavigationMenuLink asChild>
-                  <Link href="#">Components</Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#">Documentation</Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#">Blocks</Link>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-        <NavigationMenuItem className="hidden md:block">
-          <NavigationMenuTrigger>With Icon</NavigationMenuTrigger>
-          <NavigationMenuContent>
-            <ul className="grid w-[200px] gap-4">
-              <li>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <CircleHelpIcon />
-                    Backlog
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <CircleIcon />
-                    To Do
-                  </Link>
-                </NavigationMenuLink>
-                <NavigationMenuLink asChild>
-                  <Link href="#" className="flex-row items-center gap-2">
-                    <CircleCheckIcon />
-                    Done
-                  </Link>
-                </NavigationMenuLink>
-              </li>
-            </ul>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-        </NavigationMenu>
+                  </div>
+                </div>
+                
+                {/* Mobile Navigation - Clean, No Arrows */}
+                <nav className="flex-1 overflow-y-auto px-6 pb-6">
+                  <div className="flex flex-col space-y-2">
+                    {navItems.map((item, index) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={closeMobileMenu}
+                        className="group relative flex items-center px-5 py-3.5 text-base font-medium rounded-xl hover:bg-primary/12 hover:text-primary transition-all duration-300 animate-fade-in-up hover:translate-x-1"
+                        style={{ animationDelay: `${index * 80}ms` }}
+                      >
+                        {/* Animated background on hover */}
+                        <div className="absolute inset-0 bg-primary/8 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <span className="relative z-10">{item.label}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </nav>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
-  )
-}
-
-function ListItem({
-  title,
-  children,
-  href,
-  ...props
-}: React.ComponentPropsWithoutRef<"li"> & { href: string }) {
-  return (
-    <li {...props}>
-      <NavigationMenuLink asChild>
-        <Link href={href}>
-          <div className="text-sm leading-none font-medium">{title}</div>
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-snug">
-            {children}
-          </p>
-        </Link>
-      </NavigationMenuLink>
-    </li>
   )
 }
